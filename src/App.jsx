@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Megaphone,
   TrendingUp,
@@ -14,6 +14,8 @@ import {
   Send,
   Phone,
   MessageSquare,
+  Mail,
+  MapPin,
   Menu,
   X,
   ArrowRight
@@ -21,6 +23,7 @@ import {
 
 const PHONE_NUMBER = "07513124456";
 const WHATSAPP_NUMBER = "9647513124456";
+const EMAIL_ADDRESS = "info@avesta-erp.com";
 const PREFILLED_WA_MSG = "Hello Avesta Solutions, I would like to learn more about your services.";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PREFILLED_WA_MSG)}`;
 
@@ -140,6 +143,30 @@ const principlesData = [
   }
 ];
 
+// Non-stop Auto-Scroll Hook (Set to 2 seconds / 2000ms)
+function useContinuousAutoScroll(interval = 2000) {
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const timer = setInterval(() => {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (el.scrollLeft >= maxScroll - 10) {
+        el.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        const cardWidth = el.firstElementChild?.clientWidth || 300;
+        el.scrollBy({ left: cardWidth + 24, behavior: 'smooth' });
+      }
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [interval]);
+
+  return scrollRef;
+}
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -151,6 +178,12 @@ export default function App() {
     service: 'General Inquiry',
     message: ''
   });
+
+  // Auto-scroll every 2000ms (2 seconds)
+  const servicesRef = useContinuousAutoScroll(2000);
+  const solutionsRef = useContinuousAutoScroll(2000);
+  const productsRef = useContinuousAutoScroll(2000);
+  const principlesRef = useContinuousAutoScroll(2000);
 
   useEffect(() => {
     document.title = "Avesta Solutions";
@@ -306,13 +339,12 @@ export default function App() {
               </div>
             </div>
 
-            {/* HERO VISUAL WITH OFFICIAL LOGO */}
+            {/* HERO VISUAL */}
             <div className="lg:col-span-5 relative">
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="relative rounded-3xl bg-slate-900/90 border border-slate-800 p-8 backdrop-blur-xl shadow-2xl">
                   
                   <div className="py-4 relative flex flex-col items-center justify-center gap-6">
-                    {/* Replaced central icon with Avesta Logo */}
                     <div className="relative group">
                       <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300"></div>
                       <img 
@@ -362,16 +394,18 @@ export default function App() {
         </div>
       </section>
 
-      {/* SERVICES TOUCH/SWIPE CAROUSEL */}
+      {/* SERVICES CAROUSEL */}
       <section id="services" className="py-20 bg-slate-100 border-t border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-bold text-cyan-600 uppercase tracking-wider">Core Capabilities</span>
             <h2 className="text-3xl font-bold text-slate-900 mt-1">Our Services</h2>
-            <p className="text-xs text-slate-500 mt-2">Swipe left or right with your finger to explore</p>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none cursor-grab active:cursor-grabbing">
+          <div 
+            ref={servicesRef} 
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none"
+          >
             {servicesData.map((service) => {
               const IconComp = service.icon;
               return (
@@ -400,16 +434,18 @@ export default function App() {
         </div>
       </section>
 
-      {/* SOLUTIONS TOUCH/SWIPE CAROUSEL */}
+      {/* SOLUTIONS CAROUSEL */}
       <section id="solutions" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">Industry Solutions</span>
             <h2 className="text-3xl font-bold text-slate-900 mt-1">Tailored for Every Sector</h2>
-            <p className="text-xs text-slate-500 mt-2">Swipe horizontally to view industries</p>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none cursor-grab active:cursor-grabbing">
+          <div 
+            ref={solutionsRef} 
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none"
+          >
             {solutionsData.map((item) => {
               const IconComp = item.icon;
               return (
@@ -440,16 +476,18 @@ export default function App() {
         </div>
       </section>
 
-      {/* PRODUCTS TOUCH/SWIPE CAROUSEL */}
+      {/* PRODUCTS CAROUSEL */}
       <section id="products" className="py-20 bg-slate-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Innovations</span>
             <h2 className="text-3xl font-bold text-white mt-1">Our Products</h2>
-            <p className="text-xs text-slate-400 mt-2">Swipe through our featured SaaS and apps</p>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none cursor-grab active:cursor-grabbing">
+          <div 
+            ref={productsRef} 
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none"
+          >
             {productsData.map((prod) => (
               <div
                 key={prod.id}
@@ -488,16 +526,18 @@ export default function App() {
         </div>
       </section>
 
-      {/* CORE PRINCIPLES TOUCH/SWIPE CAROUSEL */}
+      {/* CORE PRINCIPLES CAROUSEL */}
       <section id="principles" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">How We Work</span>
             <h2 className="text-3xl font-bold text-slate-900 mt-1">Core Principles</h2>
-            <p className="text-xs text-slate-500 mt-2">Swipe with your finger to read our principles</p>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none cursor-grab active:cursor-grabbing">
+          <div 
+            ref={principlesRef} 
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-none"
+          >
             {principlesData.map((item) => (
               <div
                 key={item.num}
@@ -527,17 +567,38 @@ export default function App() {
               </p>
 
               <div className="space-y-3 pt-2">
-                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
-                  <p className="text-[10px] text-slate-400 font-semibold uppercase">Company</p>
-                  <p className="font-bold text-slate-800 text-sm">Avesta Solutions</p>
+                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm flex items-start gap-3">
+                  <Building2 className="w-5 h-5 text-cyan-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase">Company</p>
+                    <p className="font-bold text-slate-800 text-sm">Avesta Solutions</p>
+                  </div>
                 </div>
-                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
-                  <p className="text-[10px] text-slate-400 font-semibold uppercase">Location</p>
-                  <p className="font-medium text-slate-800 text-xs">32 Park, Erbil, Iraq</p>
+
+                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-cyan-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase">Location</p>
+                    <p className="font-medium text-slate-800 text-xs">32 Park, Erbil, Iraq</p>
+                  </div>
                 </div>
-                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
-                  <p className="text-[10px] text-slate-400 font-semibold uppercase">Phone / WhatsApp</p>
-                  <p className="font-medium text-slate-800 text-xs">{PHONE_NUMBER}</p>
+
+                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-cyan-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase">Email</p>
+                    <a href={`mailto:${EMAIL_ADDRESS}`} className="font-medium text-cyan-600 hover:underline text-xs">
+                      {EMAIL_ADDRESS}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-cyan-600 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase">Phone / WhatsApp</p>
+                    <p className="font-medium text-slate-800 text-xs">{PHONE_NUMBER}</p>
+                  </div>
                 </div>
               </div>
             </div>
