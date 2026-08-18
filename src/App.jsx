@@ -5,7 +5,6 @@ import {
   Sparkles,
   Layers,
   Database,
-  Cloud,
   Workflow,
   Bot,
   Brain,
@@ -25,7 +24,9 @@ import {
   ArrowRight,
   ExternalLink,
   ChevronRight,
-  Sparkle
+  ChevronLeft,
+  Pause,
+  Play
 } from 'lucide-react';
 
 // --- CONFIGURATION & UTILS ---
@@ -43,9 +44,92 @@ const navLinks = [
   { name: 'Contact', href: '#contact' },
 ];
 
+// Carousel Data — Services
+const servicesData = [
+  {
+    id: 'marketing',
+    icon: Megaphone,
+    color: 'amber',
+    title: 'Marketing Solutions',
+    desc: 'Turn your digital presence into a business advantage. Avesta Solutions helps businesses build stronger digital identities and connect with their audiences through modern marketing solutions.',
+    tags: ['Digital Marketing', 'Social Media Strategy', 'Brand Development', 'Content Creation', 'Digital Campaigns', 'Customer Engagement', 'Marketing Automation']
+  },
+  {
+    id: 'erp-saas',
+    icon: Layers,
+    color: 'blue',
+    title: 'ERP & SaaS Systems',
+    desc: 'Connect your business with smarter software. Avesta Solutions develops modern ERP and SaaS solutions designed to bring business processes together in one digital environment.',
+    tags: ['Procurement', 'Inventory', 'Operations', 'Sales', 'Workflows', 'Marketplace Management', 'Financial Processes', 'Business Data']
+  },
+  {
+    id: 'automation-ai',
+    icon: Bot,
+    color: 'purple',
+    title: 'Automation & AI Solutions',
+    desc: 'Let technology handle repetitive work. Avesta Solutions uses automation and artificial intelligence to streamline processes so teams spend less time on manual tasks.',
+    tags: ['AI-Powered Workflows', 'Process Automation', 'Intelligent Assistants', 'Data Processing', 'Workflow Automation', 'AI Integrations', 'Business Intelligence']
+  },
+  {
+    id: 'retail',
+    icon: ShoppingBag,
+    color: 'emerald',
+    title: 'Retail Solutions',
+    desc: 'Modern tools for modern retail. Avesta Solutions develops digital retail solutions that connect everyday retail operations with better business information.',
+    tags: ['Point-of-Sale Systems', 'Inventory Management', 'Product Catalogs', 'Sales Tracking', 'Customer CRM', 'Business Reporting', 'Digital Workflows']
+  }
+];
+
+// Carousel Data — Industry Solutions
+const solutionsData = [
+  {
+    id: 'hospitality',
+    icon: Building2,
+    color: 'text-cyan-600 group-hover:text-cyan-400',
+    title: 'Hotels & Hospitality',
+    desc: 'Solutions designed for digital procurement, marketplace management, operations, and business workflows.'
+  },
+  {
+    id: 'restaurants',
+    icon: Store,
+    color: 'text-blue-600 group-hover:text-blue-400',
+    title: 'Restaurants',
+    desc: 'Solutions designed for technology purchasing, inventory control, suppliers, and operational management.'
+  },
+  {
+    id: 'education',
+    icon: GraduationCap,
+    color: 'text-indigo-600 group-hover:text-indigo-400',
+    title: 'Schools & Education',
+    desc: 'Solutions designed for interactive digital learning experiences and engaging educational tech.'
+  },
+  {
+    id: 'retail-industry',
+    icon: ShoppingBag,
+    color: 'text-emerald-600 group-hover:text-emerald-400',
+    title: 'Retail',
+    desc: 'Solutions designed for sales tracking, inventory, products, customers, and daily store operations.'
+  },
+  {
+    id: 'enterprises',
+    icon: Layers,
+    color: 'text-purple-600 group-hover:text-purple-400',
+    title: 'Companies & Enterprises',
+    desc: 'Solutions designed for business software, automation, AI integration, marketing, and full digital transformation.'
+  }
+];
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Carousel States
+  const [activeServiceIndex, setActiveServiceIndex] = useState(0);
+  const [serviceAutoPlay, setServiceAutoPlay] = useState(true);
+
+  const [activeSolutionIndex, setActiveSolutionIndex] = useState(0);
+  const [solutionAutoPlay, setSolutionAutoPlay] = useState(true);
+
   const [contactForm, setContactForm] = useState({
     name: '',
     company: '',
@@ -55,6 +139,12 @@ export default function App() {
     message: ''
   });
 
+  // 1. Set Page Tab Title to "Avesta Solutions"
+  useEffect(() => {
+    document.title = "Avesta Solutions";
+  }, []);
+
+  // Handle Scroll
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -67,10 +157,44 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Auto-slide Services Carousel
+  useEffect(() => {
+    if (!serviceAutoPlay) return;
+    const timer = setInterval(() => {
+      setActiveServiceIndex((prev) => (prev + 1) % servicesData.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [serviceAutoPlay]);
+
+  // Auto-slide Solutions Carousel
+  useEffect(() => {
+    if (!solutionAutoPlay) return;
+    const timer = setInterval(() => {
+      setActiveSolutionIndex((prev) => (prev + 1) % solutionsData.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [solutionAutoPlay]);
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const formattedMsg = `*New Website Lead*%0A*Name:* ${contactForm.name}%0A*Company:* ${contactForm.company || 'N/A'}%0A*Email:* ${contactForm.email}%0A*Phone:* ${contactForm.phone}%0A*Interest:* ${contactForm.service}%0A*Message:* ${contactForm.message}`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${formattedMsg}`, '_blank');
+  };
+
+  const nextService = () => {
+    setActiveServiceIndex((prev) => (prev + 1) % servicesData.length);
+  };
+
+  const prevService = () => {
+    setActiveServiceIndex((prev) => (prev - 1 + servicesData.length) % servicesData.length);
+  };
+
+  const nextSolution = () => {
+    setActiveSolutionIndex((prev) => (prev + 1) % solutionsData.length);
+  };
+
+  const prevSolution = () => {
+    setActiveSolutionIndex((prev) => (prev - 1 + solutionsData.length) % solutionsData.length);
   };
 
   return (
@@ -223,22 +347,14 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right Tech Visual */}
+            {/* Right Clean Visual (Simplified Core Graphic) */}
             <div className="lg:col-span-5 relative">
               <div className="relative mx-auto max-w-md lg:max-w-none">
-                <div className="relative rounded-2xl bg-slate-900/80 border border-slate-800 p-6 backdrop-blur-xl shadow-2xl">
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                      <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                      <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                    </div>
-                    <span className="text-xs text-slate-500 font-mono">avesta-core-v2.6</span>
-                  </div>
-
-                  <div className="py-8 relative flex flex-col items-center justify-center gap-6">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-xl shadow-cyan-500/30 animate-pulse">
-                      <Brain className="w-10 h-10 text-white" />
+                <div className="relative rounded-2xl bg-slate-900/80 border border-slate-800 p-8 backdrop-blur-xl shadow-2xl">
+                  
+                  <div className="py-6 relative flex flex-col items-center justify-center gap-6">
+                    <div className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-xl shadow-cyan-500/30 animate-pulse">
+                      <Brain className="w-12 h-12 text-white" />
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 w-full">
@@ -246,7 +362,7 @@ export default function App() {
                         <Workflow className="w-5 h-5 text-cyan-400" />
                         <div className="text-left">
                           <p className="text-xs font-semibold text-white">Automation</p>
-                          <p className="text-[10px] text-slate-400">Active Workflows</p>
+                          <p className="text-[10px] text-slate-400">Workflows</p>
                         </div>
                       </div>
                       <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 flex items-center gap-3">
@@ -273,13 +389,6 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                    <span className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                      System Operational
-                    </span>
-                    <span className="text-slate-500">Erbil, IQ</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -338,11 +447,11 @@ export default function App() {
         </div>
       </section>
 
-      {/* ==================== SERVICES SECTION ==================== */}
+      {/* ==================== SERVICES CAROUSEL SECTION ==================== */}
       <section id="services" className="py-20 md:py-28 bg-slate-50 border-t border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
+          <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
             <div className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider">
               Core Capabilities
             </div>
@@ -350,153 +459,116 @@ export default function App() {
               Solutions Built Around Your Business
             </h2>
             <p className="text-slate-600 text-base sm:text-lg">
-              Technology should solve problems, not create more of them. Avesta Solutions provides practical digital solutions that help businesses improve their operations, reach customers, and prepare for what comes next.
+              Swipe or let the interactive showcase slide to explore how Avesta Solutions transforms core functions.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            {/* SERVICE 1 — MARKETING */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/80 hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between">
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Megaphone className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Marketing Solutions</h3>
-                <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                  Turn your digital presence into a business advantage. Avesta Solutions helps businesses build stronger digital identities and connect with their audiences through modern marketing solutions.
-                </p>
-                
-                <div className="space-y-2 mb-8">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Capabilities Include:</span>
-                  <div className="flex flex-wrap gap-2">
-                    {['Digital Marketing', 'Social Media Strategy', 'Brand Development', 'Content Creation', 'Digital Campaigns', 'Customer Engagement', 'Marketing Automation'].map((tag) => (
-                      <span key={tag} className="text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-medium">
-                        {tag}
+          {/* CAROUSEL CONTAINER */}
+          <div 
+            className="relative max-w-4xl mx-auto"
+            onMouseEnter={() => setServiceAutoPlay(false)}
+            onMouseLeave={() => setServiceAutoPlay(true)}
+          >
+            {/* CAROUSEL CARD DISPLAY */}
+            <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-slate-200/80 transition-all duration-500 min-h-[420px] flex flex-col justify-between">
+              
+              {(() => {
+                const service = servicesData[activeServiceIndex];
+                const IconComponent = service.icon;
+                return (
+                  <div key={service.id} className="animate-in fade-in slide-in-from-right-6 duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className={`w-14 h-14 rounded-2xl bg-${service.color}-500/10 text-${service.color}-600 flex items-center justify-center`}>
+                        <IconComponent className="w-7 h-7" />
+                      </div>
+                      <span className="text-xs font-mono font-bold text-slate-400">
+                        0{activeServiceIndex + 1} / 0{servicesData.length}
                       </span>
-                    ))}
+                    </div>
+
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4">
+                      {service.title}
+                    </h3>
+                    
+                    <p className="text-slate-600 text-base leading-relaxed mb-8">
+                      {service.desc}
+                    </p>
+
+                    <div className="space-y-3 mb-8">
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                        Capabilities Include:
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        {service.tags.map((tag) => (
+                          <span key={tag} className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-medium">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+                );
+              })()}
+
+              <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                <a
+                  href={WHATSAPP_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-600 hover:text-cyan-700"
+                >
+                  <span>Request Custom Setup</span>
+                  <ChevronRight className="w-4 h-4" />
+                </a>
+
+                {/* CONTROLS */}
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setServiceAutoPlay(!serviceAutoPlay)}
+                    className="p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                    aria-label="Toggle Auto Play"
+                  >
+                    {serviceAutoPlay ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  </button>
+                  <button
+                    onClick={prevService}
+                    className="p-2.5 rounded-full bg-slate-900 text-white hover:bg-cyan-600 transition-colors shadow-md"
+                    aria-label="Previous Slide"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={nextService}
+                    className="p-2.5 rounded-full bg-slate-900 text-white hover:bg-cyan-600 transition-colors shadow-md"
+                    aria-label="Next Slide"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
 
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-amber-600 hover:text-amber-700 pt-4 border-t border-slate-100"
-              >
-                <span>Learn More</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
             </div>
 
-            {/* SERVICE 2 — ERP & SaaS */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/80 hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between">
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Layers className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">ERP & SaaS Systems</h3>
-                <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                  Connect your business with smarter software. Avesta Solutions develops modern ERP and SaaS solutions designed to bring business processes together in one digital environment.
-                </p>
-                
-                <div className="space-y-2 mb-8">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Capabilities Include:</span>
-                  <div className="flex flex-wrap gap-2">
-                    {['Procurement', 'Inventory', 'Operations', 'Sales', 'Workflows', 'Marketplace Management', 'Financial Processes', 'Business Data'].map((tag) => (
-                      <span key={tag} className="text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-medium">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 pt-4 border-t border-slate-100"
-              >
-                <span>Learn More</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </div>
-
-            {/* SERVICE 3 — AUTOMATION & AI */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/80 hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between">
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Bot className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Automation & AI Solutions</h3>
-                <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                  Let technology handle repetitive work. Avesta Solutions uses automation and artificial intelligence to streamline processes so teams spend less time on manual tasks.
-                </p>
-                
-                <div className="space-y-2 mb-8">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Capabilities Include:</span>
-                  <div className="flex flex-wrap gap-2">
-                    {['AI-Powered Workflows', 'Process Automation', 'Intelligent Assistants', 'Data Processing', 'Workflow Automation', 'AI Integrations', 'Business Intelligence'].map((tag) => (
-                      <span key={tag} className="text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-medium">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-700 pt-4 border-t border-slate-100"
-              >
-                <span>Learn More</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </div>
-
-            {/* SERVICE 4 — RETAIL SOLUTIONS */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-200/80 hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between">
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <ShoppingBag className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Retail Solutions</h3>
-                <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                  Modern tools for modern retail. Avesta Solutions develops digital retail solutions that connect everyday retail operations with better business information.
-                </p>
-                
-                <div className="space-y-2 mb-8">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Capabilities Include:</span>
-                  <div className="flex flex-wrap gap-2">
-                    {['Point-of-Sale Systems', 'Inventory Management', 'Product Catalogs', 'Sales Tracking', 'Customer CRM', 'Business Reporting', 'Digital Workflows'].map((tag) => (
-                      <span key={tag} className="text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-medium">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 pt-4 border-t border-slate-100"
-              >
-                <span>Learn More</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+            {/* DOT INDICATORS */}
+            <div className="flex items-center justify-center gap-2 mt-6">
+              {servicesData.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveServiceIndex(idx)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    activeServiceIndex === idx ? 'w-8 bg-cyan-600' : 'w-2.5 bg-slate-300'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
             </div>
 
           </div>
+
         </div>
       </section>
 
-      {/* ==================== INDUSTRIES / SOLUTIONS ==================== */}
+      {/* ==================== INDUSTRIES / SOLUTIONS CAROUSEL ==================== */}
       <section id="solutions" className="py-20 md:py-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -508,53 +580,90 @@ export default function App() {
               Technology Across Industries
             </h2>
             <p className="text-slate-600 text-base sm:text-lg">
-              Different industries have different challenges. Our solutions are designed to adapt to the way businesses actually operate.
+              Different industries have different challenges. Explore tailored solutions designed around your domain.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-900 hover:text-white transition-all group">
-              <Building2 className="w-8 h-8 text-cyan-600 group-hover:text-cyan-400 mb-4" />
-              <h3 className="font-bold text-lg mb-2">Hotels & Hospitality</h3>
-              <p className="text-xs text-slate-600 group-hover:text-slate-400 leading-relaxed">
-                Solutions designed for digital procurement, marketplace management, operations, and business workflows.
-              </p>
+          {/* SOLUTIONS CAROUSEL */}
+          <div 
+            className="relative max-w-4xl mx-auto"
+            onMouseEnter={() => setSolutionAutoPlay(false)}
+            onMouseLeave={() => setSolutionAutoPlay(true)}
+          >
+            <div className="bg-slate-900 text-white rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden transition-all duration-500">
+              
+              {(() => {
+                const solution = solutionsData[activeSolutionIndex];
+                const IconComp = solution.icon;
+                return (
+                  <div key={solution.id} className="animate-in fade-in slide-in-from-right-6 duration-300 min-h-[220px] flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="p-3.5 rounded-2xl bg-slate-800 border border-slate-700">
+                          <IconComp className={`w-8 h-8 ${solution.color}`} />
+                        </div>
+                        <span className="text-xs font-mono text-cyan-400 font-semibold uppercase tracking-widest">
+                          Target Sector {activeSolutionIndex + 1} of {solutionsData.length}
+                        </span>
+                      </div>
+
+                      <h3 className="text-2xl sm:text-3xl font-extrabold mb-3">
+                        {solution.title}
+                      </h3>
+                      <p className="text-slate-300 text-base leading-relaxed max-w-2xl">
+                        {solution.desc}
+                      </p>
+                    </div>
+
+                    <div className="pt-6 mt-6 border-t border-slate-800 flex items-center justify-between">
+                      <a
+                        href={WHATSAPP_LINK}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300 uppercase tracking-wider"
+                      >
+                        <span>Discuss Industry Use Case</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </a>
+
+                      {/* CONTROLS */}
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={prevSolution}
+                          className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-white transition-colors"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={nextSolution}
+                          className="p-2 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white transition-colors"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
             </div>
 
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-900 hover:text-white transition-all group">
-              <Store className="w-8 h-8 text-blue-600 group-hover:text-blue-400 mb-4" />
-              <h3 className="font-bold text-lg mb-2">Restaurants</h3>
-              <p className="text-xs text-slate-600 group-hover:text-slate-400 leading-relaxed">
-                Solutions designed for technology purchasing, inventory control, suppliers, and operational management.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-900 hover:text-white transition-all group">
-              <GraduationCap className="w-8 h-8 text-indigo-600 group-hover:text-indigo-400 mb-4" />
-              <h3 className="font-bold text-lg mb-2">Schools & Education</h3>
-              <p className="text-xs text-slate-600 group-hover:text-slate-400 leading-relaxed">
-                Solutions designed for interactive digital learning experiences and engaging educational tech.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-900 hover:text-white transition-all group">
-              <ShoppingBag className="w-8 h-8 text-emerald-600 group-hover:text-emerald-400 mb-4" />
-              <h3 className="font-bold text-lg mb-2">Retail</h3>
-              <p className="text-xs text-slate-600 group-hover:text-slate-400 leading-relaxed">
-                Solutions designed for sales tracking, inventory, products, customers, and daily store operations.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-slate-900 hover:text-white transition-all group">
-              <Layers className="w-8 h-8 text-purple-600 group-hover:text-purple-400 mb-4" />
-              <h3 className="font-bold text-lg mb-2">Companies</h3>
-              <p className="text-xs text-slate-600 group-hover:text-slate-400 leading-relaxed">
-                Solutions designed for business software, automation, AI integration, marketing, and full digital transformation.
-              </p>
+            {/* DOT INDICATORS */}
+            <div className="flex items-center justify-center gap-2 mt-6">
+              {solutionsData.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveSolutionIndex(idx)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    activeSolutionIndex === idx ? 'w-8 bg-slate-900' : 'w-2.5 bg-slate-300'
+                  }`}
+                  aria-label={`Go to sector ${idx + 1}`}
+                />
+              ))}
             </div>
 
           </div>
+
         </div>
       </section>
 
